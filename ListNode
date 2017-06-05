@@ -1,0 +1,13 @@
+public class Solution
+{
+public static void main(String[] args)
+{
+ListNode node = new ListNode(list.head, int n)
+{
+if(Node == n)
+{
+System.out.println("n");
+}
+}
+}
+}
