@@ -1,0 +1,63 @@
+class Node
+{
+private int value;
+private Node left;
+private Node right
+//getter and setter
+}
+public class DeleteNodeBST
+{
+Node parent = null;
+boolean deleteNodeBST(Node node, int val)
+{
+if(node == null)
+{
+return false;
+}
+if(node.getValue() == value)
+{
+if(node.getLeft() == null || (node.getRight() == null))
+{
+//leaf node
+node = null;
+return true;
+}
+if(node.getLeft() != null) && (node.getRight() != null)
+{
+//node with two children
+node.SetValue(FindMinimumAndReturnWithDelete(node.getRight()));
+return true;
+}
+//either left child or right child
+if(node.getLeft()  != null)
+parent.setLeft(node.getLeft());
+node = null;
+return true;
+}
+if(node.getRight() != null)
+parent.setRight(node.getRight());
+node = null;
+return true;
+}
+}
+parent = node;
+if(node.getValue() > value)
+return deleteNodeBST(node.getLeft(), value);
+}
+else
+{
+return deleteNodeBST(node.getRight(), value);
+}
+}
+int findMinimumAndReturnWithDelete(Node node)
+{
+if(node.getLeft() == null)
+int v = node.getValue();
+node = null;
+return v;
+}
+return FindMinimumAndReturnWithDelete(node.getLeft());
+}
+}
+
+
