@@ -1,0 +1,20 @@
+//Node head;
+Node left Child;
+Node right Child;
+Node sibilings;
+Node subleft Child;
+Node subright Child;
+Node subleft siblings == Node subright siblings;
+Node leftChild = Node rightChild;
+Node subleft Child = Node subright Child;//
+public class Solution
+{
+public static void main(String[] args)
+{
+Node leftChild = new Node leftChild();
+Node rightChild = new Node rightChild();
+LeftChild = left;
+RightChild = right;
+System.out.println("LeftChild : " + "RightChild: ");
+}
+}
