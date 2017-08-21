@@ -1,0 +1,155 @@
+import java.awt.*; 
+import matrix.*; 
+public class BSPTree{
+
+    private BSPNode root;
+    private String treeName;
+    private int numNodes;            
+    private int numFrontNodes;            
+    private int numBackNodes;            
+    private int numSplitNodes;            
+    private int numCoinNodes;            
+
+    public BSPTree(String newName) 
+	  root = null;
+	  treeName = newName;
+	  numFrontNodes = 0;
+	  numBackNodes = 0;
+	  numSplitNodes = 0;
+	  numCoinNodes = 0;
+    }
+    public BSPNode getRoot()  {  return root;  }
+
+    public BSPTree getTree()  {  return this;  }
+    public void addFace(String id, Face face) {
+
+	  BSPNode newNode = new BSPNode(id, face);
+	  int placement;
+
+	  if (root == null) {
+
+	  root = newNode;  // System.out.print("Root: ");  newNode.print();
+	  return;
+	  }
+	  BSPNode currentNode = root;
+	  while(currentNode != null) {
+
+	  placement = currentNode.classifyPolygon(newNode);
+
+	  if (placement == Plane3d.IN_FRONT) {  
+
+		if (currentNode.getFront() == null) {  // reached a leaf node
+		    numFrontNodes += currentNode.addToFront(newNode);
+		    break;
+
+		} else {  currentNode = currentNode.getFront();  }
+		
+	    } else if (placement == Plane3d.IN_BACK) {
+
+		if (currentNode.getBack() == null) {  // reached a leaf node
+		    numBackNodes += currentNode.addToBack(newNode);
+		    break;
+
+		} else {  currentNode = currentNode.getBack();  }
+
+	    } else if (placement == Plane3d.SPANNING) {
+		numSplitNodes += currentNode.splitPoly(getTree(), newNode);  
+		break;
+
+	    } else {  // treat coincident polygons the same as IN_FRONT
+
+		if (currentNode.getFront() == null) {  // reached a leaf node
+		    numCoinNodes += currentNode.addToFront(newNode);
+		    break;
+
+		} else {  currentNode = currentNode.getFront();  }
+	    }
+	} // end while()
+    }
+     public void addNode(BSPNode newNode) {
+
+	   int placement;
+	   BSPNode currentNode = root;
+
+	   while (currentNode != null) {
+
+	   placement = currentNode.classifyPolygon(newNode);
+
+	   if (placement == Plane3d.IN_FRONT) {  
+
+		if (currentNode.getFront() == null) {  // reached a leaf node
+
+		    numFrontNodes += currentNode.addToFront(newNode);
+		    break;
+
+		} else {  currentNode = currentNode.getFront();  }
+		
+	    } else if (placement == Plane3d.IN_BACK) {
+
+		if (currentNode.getBack() == null) {  // reached a leaf node
+
+		    numBackNodes += currentNode.addToBack(newNode);
+		    break;
+
+		} else {  currentNode = currentNode.getBack();  }
+
+	    } else if (placement == Plane3d.SPANNING) {
+
+		numSplitNodes += currentNode.splitPoly(getTree(), newNode);  
+		break;
+
+	    } else {  // treat coincident polygons the same as IN_FRONT
+
+		if (currentNode.getFront() == null) {  // reached a leaf node
+
+		    numCoinNodes += currentNode.addToFront(newNode);
+		    break;
+
+		} else {  currentNode = currentNode.getFront();  }
+	    }
+	} // end while()
+    }
+   
+    public void displayTree(Graphics g, BSPNode root, Point4 eyePoint) {
+
+	if (root == null) {  return;  }
+
+   double distance = 0;
+
+	// compute distance from eyepoint to the node's partition plane
+	distance = root.getPartition().pointPlaneDistance(eyePoint);
+
+	// viewpoint is IN_FRONT of the root node's partition plane
+	if (distance > 0) {  
+
+	    displayTree(g, root.getBack(), eyePoint);
+	    root.displayNode(g);
+	    displayTree(g, root.getFront(), eyePoint);
+	    
+	// viewpoint is IN_BACK of (or COINCIDENT with) the root node's 
+	// partition plane
+	} else {
+
+	    displayTree(g, root.getFront(), eyePoint);
+	    root.displayNode(g);
+	    displayTree(g, root.getBack(), eyePoint);
+	}
+    }
+     public Point4 mapViewPoint(Point4 eyePoint) {
+
+	if (root != null)
+	    Matrix4 currentInverse = View.inverse();
+	    return currentInverse.timesPoint(eyePoint);
+
+	} else {
+	    return eyePoint;
+	}
+    }
+    public void print() {
+	System.out.println("tree name = "      + treeName);
+	System.out.println("numFrontNodes = "  + numFrontNodes + 
+			 ", numBackNodes = "   + numBackNodes  + 
+			 ", numSplitNodes = "  + numSplitNodes + 
+		         ", numCoinNodes = "   + numCoinNodes);
+    }
+}
